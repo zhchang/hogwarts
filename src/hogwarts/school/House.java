@@ -6,39 +6,41 @@ import hogwarts.school.staff.MacGonagall;
 import hogwarts.school.staff.Teacher;
 import hogwarts.school.study.Question;
 import hogwarts.school.study.Subject;
-import hogwarts.school.study.Topic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
-import android.util.Pair;
+import android.app.Service;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.IBinder;
 
-public class House {
+public class House extends Service {
 	private Head head;
 
-	public static final House gryffindor;
-	public static final House hufflepuff;
-	public static final House ravenclaw;
-	public static final House slytherin;
-
-	static {
-		gryffindor = new House(new MacGonagall());
-		hufflepuff = new House(new MacGonagall());
-		ravenclaw = new House(new MacGonagall());
-		slytherin = new House(new MacGonagall());
-	}
-
-	Map<Subject, List<Teacher>> subjectMap = new HashMap<Subject, List<Teacher>>();
+	Map<String, List<Teacher>> subjectMap = new HashMap<String, List<Teacher>>();
 	List<Office> offices = new ArrayList<Office>();
 	private static final int MAX_OFFICES = 5;
+	
 
-	private House(Head head) {
-		this.head = head;
+	public void onCreate(){
 	}
+
+
+	protected void onHandleIntent(Intent intent){
+		Bundle question = intent.getExtras().getBundle("question");
+		if(null != question){
+
+		}
+	}
+
+	public IBinder onBind(Intent intent){
+		return null;
+	}
+
 
 	public void appointHead(Head head) {
 		this.head = head;
@@ -67,9 +69,9 @@ public class House {
 
 	}
 
-	public void ask(Question question) {
-		Pair<Subject, Topic> pair = question.getSubject();
-		List<Teacher> teachers = subjectMap.get(pair.first);
+	public void ask(Bundle question) {
+		String subject = question.getString("subject");
+		List<Teacher> teachers = subjectMap.get(subject);
 		if (null != teachers) {
 			for (Teacher teacher : teachers) {
 					refer(question, teacher);
@@ -79,9 +81,10 @@ public class House {
 	}
 
 	public void assign(Teacher teacher) {
-		Set<Subject> subjects = teacher.getSubjects();
+		teacher.setHouse(this);
+		Set<String> subjects = teacher.getSubjects();
 		if (null != subjects) {
-			for (Subject subject : subjects) {
+			for (String subject : subjects) {
 				List<Teacher> teachers = subjectMap.get(subject);
 				if (null == teachers) {
 					teachers = new ArrayList<Teacher>();
@@ -89,12 +92,12 @@ public class House {
 				if (!teachers.contains(teacher)) {
 					teachers.add(teacher);
 				}
-				subjectMap.put(subject, teachers);
+				subjectMap.put(subject.getClass().getName(), teachers);
 			}
 		}
 	}
 
-	public void refer(Question question, Teacher teacher) {
+	public void refer(Bundle question, Teacher teacher) {
 		teacher.answer(question);
 	}
 

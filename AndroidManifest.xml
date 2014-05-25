@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.hogwarts"
+    package="hogwarts.school"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -21,6 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+	<service
+			android:name="hogwarts.school.Gryffindor"
+			android:exported="false"/>
     </application>
 
 </manifest>

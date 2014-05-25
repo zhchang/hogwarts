@@ -1,24 +1,25 @@
 package hogwarts.example.common;
 
-import hogwarts.school.study.Question;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public abstract class MathQuestion extends Question {
-	
-	public static final String ID = "MathQuestion";
+public abstract class MathQuestion implements Parcelable{
 	
 	public int op1,op2;
 	public int answer;
 
 	protected MathQuestion(int a, int b) {
-		super(MathSubject.instance,AddTopic.instance);
 		op1 = a;
 		op2 = b;
 	}
 	
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeInt(op1);
+		out.writeInt(op2);
+    }
+
+
+	
 	public abstract void onCalculated();
 	
-	public String getId(){
-		return ID;
-	}
-
 }
