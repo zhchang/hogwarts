@@ -1,49 +1,54 @@
 package hogwarts.school.study;
 
-import hogwarts.example.common.MyParcelable;
 import hogwarts.school.Gryffindor;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.IInterface;
+import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public abstract class Question implements Parcelable {
+public class Question implements Parcelable {
+	public IBinder ipc;
+	public Bundle param;
+	public String subject;
+	public String id;
 
-	private Bundle bundle = new Bundle();
-	protected String subject;
-	protected String id;
-	private IInterface callback;
-	private Context context;
-
-	public Question(Context context, String subject, String id,
-			IInterface callback) {
-		this.context = context;
+	public Question(IBinder ipc, Bundle param,String subject,String id) {
+		this.ipc = ipc;
+		this.param = param;
 		this.subject = subject;
 		this.id = id;
-		this.callback = callback;
 	}
-	
-	public Question(Parcel in){
-		subject = in.readString();
+
+	public Question(Parcel in) {
 		id = in.readString();
-		callback = in.readStrongBinder();
+		subject = in.readString();
+		param = in.readBundle();
+		ipc = in.readStrongBinder();
 	}
 
-	public void writeToParcel(Parcel out, int flags) {
-		out.writeString(subject);
-		out.writeString(id);
-		out.writeStrongBinder(callback.asBinder());
+	public void ask(Context context) {
+		if (null != context) {
+			Intent intent = new Intent(context, Gryffindor.class);
+			intent.setAction("question");
+			intent.putExtra("question", this);
+			context.startService(intent);
+		}
 	}
 
-	public void ask() {
-		bundle.clear();
-		bundle.putParcelable("question", this);
-		Intent intent = new Intent(context, Gryffindor.class);
-		intent.getExtras().putBundle("question", bundle);
-		context.startService(intent);
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(id);
+		dest.writeString(subject);
+		dest.writeBundle(param);
+		dest.writeStrongBinder(ipc);
 	}
 
 	public static final Parcelable.Creator<Question> CREATOR = new Parcelable.Creator<Question>() {

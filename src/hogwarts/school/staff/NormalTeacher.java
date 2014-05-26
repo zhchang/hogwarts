@@ -2,14 +2,13 @@ package hogwarts.school.staff;
 
 import hogwarts.school.House;
 import hogwarts.school.resource.Office;
+import hogwarts.school.study.Question;
 import hogwarts.school.study.Work;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import android.os.Bundle;
 
 public abstract class NormalTeacher implements Teacher {
 	House house;
@@ -38,18 +37,18 @@ public abstract class NormalTeacher implements Teacher {
 
 	
 	@Override
-	public void answer(final Bundle question) {
+	public void answer(final Question question) {
 		final Office office = house.getAnOffice();
-		/*Work work = answers.get(question.getId());
+		Work work = answers.get(question.id);
 		if(null!=work){
 			work.setQuestion(question);
 			office.enter(work);
-		}*/
+		}
 
 	}
 	
-	protected void setAnswer(String questionId, Work answer){
-		answers.put(questionId, answer);
+	protected void setAnswer(String questionId, Work work){
+		answers.put(questionId, work);
 	}
 
 }

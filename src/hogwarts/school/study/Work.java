@@ -4,15 +4,16 @@ import hogwarts.school.resource.Office;
 
 public abstract class Work implements Runnable {
 
-	protected Question question;
 	protected Office office;
+	protected Question question;
 
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
 
 	public void setOffice(Office office) {
 		this.office = office;
+	}
+	
+	public void setQuestion(Question question){
+		this.question = question;
 	}
 
 	protected abstract void doJob();
