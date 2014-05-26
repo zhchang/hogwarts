@@ -1,6 +1,6 @@
 package hogwarts.school.study;
 
-import hogwarts.school.Gryffindor;
+import hogwarts.school.House;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,7 +30,7 @@ public class Question implements Parcelable {
 
 	public void ask(Context context) {
 		if (null != context) {
-			Intent intent = new Intent(context, Gryffindor.class);
+			Intent intent = new Intent(context, House.serviceClass);
 			intent.setAction("question");
 			intent.putExtra("question", this);
 			context.startService(intent);

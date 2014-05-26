@@ -1,6 +1,5 @@
 package hogwarts.school;
 
-import hogwarts.example.MathTeacher;
 import hogwarts.school.resource.Office;
 import hogwarts.school.staff.Head;
 import hogwarts.school.staff.Teacher;
@@ -16,17 +15,24 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-public class House extends Service {
+public abstract class House extends Service {
 	private Head head;
+	public static Class serviceClass;
 
 	Map<String, List<Teacher>> subjectMap = new HashMap<String, List<Teacher>>();
 	List<Office> offices = new ArrayList<Office>();
 	private static final int MAX_OFFICES = 5;
 
+	public House() {
+		super();
+		initHouse();
+	}
+
+	abstract protected void initHouse();
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		System.out.println("service: on start command");
-		this.assign(new MathTeacher());
 		if ("question".equals(intent.getAction())) {
 			Question question = intent.getParcelableExtra("question");
 			ask(question);
