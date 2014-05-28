@@ -10,13 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 
 public class TestActivity extends Activity {
-	static {
-		House.serviceClass = MathHouse.class;
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Owlery.getInstance().init(this);
 		super.onCreate(savedInstanceState);
 		TextView text = new TextView(this);
 		text.setText("fuck this man\n fuck this");
@@ -30,10 +26,6 @@ public class TestActivity extends Activity {
 		this.setContentView(text);
 	}
 
-	@Override
-	protected void onDestroy() {
-		Owlery.getInstance().finish();
-	}
 
 	@Override
 	protected void onResume() {

@@ -2,7 +2,7 @@ package hogwarts.school.study;
 
 import hogwarts.school.resource.Office;
 
-public abstract class Work implements Runnable {
+public abstract class QuestionWork implements Runnable {
 
 	protected Office office;
 	protected Question question;

@@ -1,13 +1,13 @@
 package hogwarts.example;
 
 import hogwarts.school.staff.NormalTeacher;
-import hogwarts.school.study.Work;
+import hogwarts.school.study.QuestionWork;
 
 public class MathTeacher extends NormalTeacher {
 
 	public MathTeacher() {
 		teachSubject("math");
-		this.setAnswer("add", new Work() {
+		this.setAnswer("add", new QuestionWork() {
 
 			@Override
 			protected void doJob() {
