@@ -18,6 +18,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 
+/**
+ * A house is a service. It can assign "Teachers" to subjects, so that we question asked about these subjects, 
+ * associated teachers will be there to "answer".
+ * A Teacher can refer the question to another teacher whether or NOT he has done some work on it. (used for chain processing.)
+ * 
+ * To start the service, one must call: House.startService(context,class); the second parameter class is the essential parameter
+ * == full qualified name of House implementation that is used.  
+ * 
+ * all House implementation must overwrite method initHouse(Context context) to assign Teachers, init owlery, etc.
+ * 
+ * @author zhaochang
+ *
+ */
 public abstract class House extends Service {
 	private Head head;
 	public static Class serviceClass;
