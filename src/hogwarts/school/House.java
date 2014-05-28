@@ -1,5 +1,6 @@
 package hogwarts.school;
 
+import hogwarts.school.owl.Owlery;
 import hogwarts.school.resource.Office;
 import hogwarts.school.staff.Head;
 import hogwarts.school.staff.Teacher;
@@ -12,7 +13,9 @@ import java.util.Map;
 import java.util.Set;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 
 public abstract class House extends Service {
@@ -22,20 +25,28 @@ public abstract class House extends Service {
 	Map<String, List<Teacher>> subjectMap = new HashMap<String, List<Teacher>>();
 	List<Office> offices = new ArrayList<Office>();
 	private static final int MAX_OFFICES = 5;
+	private boolean inited = false;
 
 	public House() {
 		super();
-		initHouse();
 	}
 
-	abstract protected void initHouse();
+	abstract protected void initHouse(Context context);
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		if(!inited){
+			initHouse(getApplicationContext());
+			inited = true;
+		}
 		System.out.println("service: on start command");
 		if ("question".equals(intent.getAction())) {
 			Question question = intent.getParcelableExtra("question");
 			ask(question);
+		} else if ("owlpost".equals(intent.getAction())) {
+			String name = intent.getStringExtra("name");
+			Bundle bundle = intent.getBundleExtra("post");
+			Owlery.getInstance().post(name, bundle);
 		}
 		return Service.START_NOT_STICKY;
 	}

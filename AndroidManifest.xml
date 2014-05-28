@@ -22,8 +22,8 @@
             </intent-filter>
         </activity>
         <service
+            android:process=":remote"
             android:name="hogwarts.example.MathHouse"/>
-            <!-- android:process=":remote"/> -->
     </application>
 
 </manifest>
