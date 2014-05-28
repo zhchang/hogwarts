@@ -1,24 +1,32 @@
 package hogwarts.example;
 
-import hogwarts.example.common.AddTopic;
-import hogwarts.example.common.MathQuestion;
-import hogwarts.example.common.MathSubject;
 import hogwarts.school.staff.NormalTeacher;
-import hogwarts.school.study.NormalAnswer;
+import hogwarts.school.study.Work;
 
 public class MathTeacher extends NormalTeacher {
 
 	public MathTeacher() {
-		teachSubject(MathSubject.instance, AddTopic.instance);
+		teachSubject("math");
+		this.setAnswer("add", new Work() {
 
-		setAnswer(MathQuestion.ID, new NormalAnswer(this) {
 			@Override
-			public void answer() {
-				if (question instanceof MathQuestion) {
-					final MathQuestion mq = (MathQuestion) question;
-					mq.answer = mq.op1 + mq.op2;
-					mq.onCalculated();
+			protected void doJob() {
+				if (null != question) {
+					MathQuestion thing = MathQuestion.Stub
+							.asInterface(question.ipc);
+					if (null != thing) {
+						int op1 = question.param.getInt("op1");
+						int op2 = question.param.getInt("op2");
+						question.param.putInt("sum", op1 + op2);
+						try {
+							thing.answer(question.param);
+						} catch (Exception e) {
+
+						}
+					}
+
 				}
+
 			}
 		});
 

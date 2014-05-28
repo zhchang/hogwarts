@@ -1,44 +1,64 @@
 package hogwarts.school.study;
 
 import hogwarts.school.House;
-import android.util.Pair;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public abstract class Question {
-	
-	boolean valid = true;
-	boolean answered = false;
-	Pair<Subject,Topic> pair = null;
-	
-	public abstract String getId();
-	
-	protected Question(Subject subject, Topic topic){
-		pair = new Pair<Subject,Topic>(subject,topic);
-	}
-	
-	public synchronized boolean isValid(){
-		return valid && !answered;
-	}
-	
-	public synchronized void neverMind(){
-		valid = false;
+public class Question implements Parcelable {
+	public IBinder ipc;
+	public Bundle param;
+	public String subject;
+	public String id;
+
+	public Question(IBinder ipc, Bundle param,String subject,String id) {
+		this.ipc = ipc;
+		this.param = param;
+		this.subject = subject;
+		this.id = id;
 	}
 
-	public synchronized void answered(){
-		answered = true;
+	public Question(Parcel in) {
+		id = in.readString();
+		subject = in.readString();
+		param = in.readBundle();
+		ipc = in.readStrongBinder();
 	}
-	
-	public void ask(House house){
-		valid = true;
-		answered = false;
-		house.ask(this);
+
+	public void ask(Context context) {
+		if (null != context) {
+			Intent intent = new Intent(context, House.serviceClass);
+			intent.setAction("question");
+			intent.putExtra("question", this);
+			context.startService(intent);
+		}
 	}
-	
-	public void ask(){
-		ask(House.gryffindor);
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
-	
-	public Pair<Subject,Topic> getSubject(){
-		return pair;
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(id);
+		dest.writeString(subject);
+		dest.writeBundle(param);
+		dest.writeStrongBinder(ipc);
 	}
+
+	public static final Parcelable.Creator<Question> CREATOR = new Parcelable.Creator<Question>() {
+		public Question createFromParcel(Parcel in) {
+			return new Question(in);
+		}
+
+		public Question[] newArray(int size) {
+			return new Question[size];
+		}
+	};
 
 }

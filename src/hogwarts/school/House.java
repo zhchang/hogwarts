@@ -1,54 +1,127 @@
 package hogwarts.school;
 
-import hogwarts.school.resource.Facility;
+import hogwarts.school.owl.Owlery;
+import hogwarts.school.resource.Office;
 import hogwarts.school.staff.Head;
-import hogwarts.school.staff.MacGonagall;
 import hogwarts.school.staff.Teacher;
 import hogwarts.school.study.Question;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-public class House {
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.IBinder;
+
+public abstract class House extends Service {
 	private Head head;
-	
-	public static final House gryffindor;
-	public static final House hufflepuff;
-	public static final House ravenclaw;
-	public static final  House slytherin;
-	
-	static{
-		gryffindor = new House(new MacGonagall());
-		hufflepuff = new House(new MacGonagall());
-		ravenclaw = new House(new MacGonagall());
-		slytherin = new House(new MacGonagall());
+	public static Class serviceClass;
+
+	Map<String, List<Teacher>> subjectMap = new HashMap<String, List<Teacher>>();
+	List<Office> offices = new ArrayList<Office>();
+	private static final int MAX_OFFICES = 5;
+	private boolean inited = false;
+
+	public House() {
+		super();
 	}
-	
-	private House(Head head){
+
+	abstract protected void initHouse(Context context);
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		if(!inited){
+			initHouse(getApplicationContext());
+			inited = true;
+		}
+		System.out.println("service: on start command");
+		if ("question".equals(intent.getAction())) {
+			Question question = intent.getParcelableExtra("question");
+			ask(question);
+		} else if ("owlpost".equals(intent.getAction())) {
+			String name = intent.getStringExtra("name");
+			Bundle bundle = intent.getBundleExtra("post");
+			Owlery.getInstance().post(name, bundle);
+		}
+		return Service.START_NOT_STICKY;
+	}
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		System.out.println("service created");
+	}
+
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
+
+	public void appointHead(Head head) {
 		this.head = head;
 	}
-	
-	public void appointHeadMaster(Head head){
-		this.head = head;
+
+	public Head getHead() {
+		return this.head;
 	}
-	
-	public Facility bookFacility(){
-		return head.bookFacility();
+
+	public Office getAnOffice() {
+		Office chosen = null;
+		int min = Integer.MAX_VALUE;
+		synchronized (offices) {
+			for (Office office : offices) {
+				if (office.getUseCount() < min) {
+					min = office.getUseCount();
+					chosen = office;
+				}
+			}
+			if (null == chosen || (min > 0 && offices.size() < MAX_OFFICES)) {
+				try {
+					chosen = new Office();
+					offices.add(chosen);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return chosen;
+
 	}
-	
-	public void releaseFacility(Facility facility){
-		head.releaseFacility(facility);
+
+	public void ask(Question question) {
+		String subject = question.subject;
+		List<Teacher> teachers = subjectMap.get(subject);
+		if (null != teachers) {
+			for (Teacher teacher : teachers) {
+				refer(question, teacher);
+				return;
+			}
+		}
 	}
-	
-	public void ask(Question question){
-		this.head.ask(question);
-	}
-	
-	public void refer(Question question, Teacher teacher){
-		teacher.answer(question);
-	}
-	
-	public void assign(Teacher teacher){
+
+	public void assign(Teacher teacher) {
 		teacher.setHouse(this);
-		this.head.introduce(teacher);
+		Set<String> subjects = teacher.getSubjects();
+		if (null != subjects) {
+			for (String subject : subjects) {
+				List<Teacher> teachers = subjectMap.get(subject);
+				if (null == teachers) {
+					teachers = new ArrayList<Teacher>();
+				}
+				if (!teachers.contains(teacher)) {
+					teachers.add(teacher);
+				}
+				subjectMap.put(subject, teachers);
+			}
+		}
+	}
+
+	public void refer(Question question, Teacher teacher) {
+		teacher.answer(question);
 	}
 
 }
