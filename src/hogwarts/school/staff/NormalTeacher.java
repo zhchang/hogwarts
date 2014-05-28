@@ -3,7 +3,7 @@ package hogwarts.school.staff;
 import hogwarts.school.House;
 import hogwarts.school.resource.Office;
 import hogwarts.school.study.Question;
-import hogwarts.school.study.Work;
+import hogwarts.school.study.QuestionWork;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ public abstract class NormalTeacher implements Teacher {
 	House house;
 
 	protected Set<String> subjects = new HashSet<String>();
-	private Map<String, Work> answers  = new HashMap<String,Work>();
+	private Map<String, QuestionWork> answers  = new HashMap<String,QuestionWork>();
 	
 	public void teachSubject(String subject){
         	subjects.add(subject);
@@ -39,7 +39,7 @@ public abstract class NormalTeacher implements Teacher {
 	@Override
 	public void answer(final Question question) {
 		final Office office = house.getAnOffice();
-		Work work = answers.get(question.id);
+		QuestionWork work = answers.get(question.id);
 		if(null!=work){
 			work.setQuestion(question);
 			office.enter(work);
@@ -47,7 +47,7 @@ public abstract class NormalTeacher implements Teacher {
 
 	}
 	
-	protected void setAnswer(String questionId, Work work){
+	protected void setAnswer(String questionId, QuestionWork work){
 		answers.put(questionId, work);
 	}
 

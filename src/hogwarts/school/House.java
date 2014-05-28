@@ -25,7 +25,6 @@ public abstract class House extends Service {
 	Map<String, List<Teacher>> subjectMap = new HashMap<String, List<Teacher>>();
 	List<Office> offices = new ArrayList<Office>();
 	private static final int MAX_OFFICES = 5;
-	private boolean inited = false;
 
 	public House() {
 		super();
@@ -35,12 +34,10 @@ public abstract class House extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if(!inited){
-			initHouse(getApplicationContext());
-			inited = true;
-		}
 		System.out.println("service: on start command");
-		if ("question".equals(intent.getAction())) {
+		if ("init".equals(intent.getAction())) {
+			initHouse(getApplicationContext());
+		} else if ("question".equals(intent.getAction())) {
 			Question question = intent.getParcelableExtra("question");
 			ask(question);
 		} else if ("owlpost".equals(intent.getAction())) {
@@ -49,6 +46,13 @@ public abstract class House extends Service {
 			Owlery.getInstance().post(name, bundle);
 		}
 		return Service.START_NOT_STICKY;
+	}
+
+	public static void startService(Context context,Class serviceClass) {
+		House.serviceClass = serviceClass;
+		Intent intent = new Intent(context, House.serviceClass);
+		intent.setAction("init");
+		context.startService(intent);
 	}
 
 	@Override
