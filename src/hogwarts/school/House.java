@@ -22,7 +22,7 @@ public abstract class House extends Service {
 	private Head head;
 	public static Class serviceClass;
 
-	Map<String, List<Teacher>> subjectMap = new HashMap<String, List<Teacher>>();
+	Map<String, Teacher> subjectMap = new HashMap<String, Teacher>();
 	List<Office> offices = new ArrayList<Office>();
 	private static final int MAX_OFFICES = 5;
 
@@ -48,7 +48,7 @@ public abstract class House extends Service {
 		return Service.START_NOT_STICKY;
 	}
 
-	public static void startService(Context context,Class serviceClass) {
+	public static void startService(Context context, Class serviceClass) {
 		House.serviceClass = serviceClass;
 		Intent intent = new Intent(context, House.serviceClass);
 		intent.setAction("init");
@@ -98,12 +98,16 @@ public abstract class House extends Service {
 
 	public void ask(Question question) {
 		String subject = question.subject;
-		List<Teacher> teachers = subjectMap.get(subject);
-		if (null != teachers) {
-			for (Teacher teacher : teachers) {
-				refer(question, teacher);
-				return;
-			}
+		Teacher teacher = subjectMap.get(subject);
+		if (null != teacher) {
+			refer(question, teacher);
+		}
+	}
+
+	public void requestHelp(Object object, String subject, String help) {
+		Teacher teacher = subjectMap.get(subject);
+		if (null != teacher) {
+			teacher.help(help, object);
 		}
 	}
 
@@ -112,14 +116,7 @@ public abstract class House extends Service {
 		Set<String> subjects = teacher.getSubjects();
 		if (null != subjects) {
 			for (String subject : subjects) {
-				List<Teacher> teachers = subjectMap.get(subject);
-				if (null == teachers) {
-					teachers = new ArrayList<Teacher>();
-				}
-				if (!teachers.contains(teacher)) {
-					teachers.add(teacher);
-				}
-				subjectMap.put(subject, teachers);
+				subjectMap.put(subject, teacher);
 			}
 		}
 	}

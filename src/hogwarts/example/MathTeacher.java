@@ -31,5 +31,8 @@ public class MathTeacher extends NormalTeacher {
 		});
 
 	}
+	
+	public void help(String help, Object object){
+	}
 
 }

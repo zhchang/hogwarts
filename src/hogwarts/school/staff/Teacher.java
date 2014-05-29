@@ -12,4 +12,6 @@ public interface Teacher {
 	void answer(Question question);
 	
 	void setHouse(House house);
+	
+	void help(String help, Object object);
 }

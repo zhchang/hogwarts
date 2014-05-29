@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class NormalTeacher implements Teacher {
-	House house;
+	protected House house;
 
 	protected Set<String> subjects = new HashSet<String>();
 	private Map<String, QuestionWork> answers  = new HashMap<String,QuestionWork>();
