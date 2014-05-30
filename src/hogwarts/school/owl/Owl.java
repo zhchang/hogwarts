@@ -16,6 +16,12 @@ public class Owl {
 		}
 	}
 	
+	public void onNews(String news, Bundle bundle){
+		if(null != owner){
+			owner.onNews(news, bundle);
+		}
+	}
+	
 	public void setOwner(OwlOwner owner){
 		this.owner = owner;
 	}
