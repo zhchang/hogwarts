@@ -1,8 +1,11 @@
 package hogwarts.example;
 
-import hogwarts.school.House;
 import hogwarts.school.owl.Owlery;
 import hogwarts.school.study.Question;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -15,6 +18,7 @@ public class TestActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TextView text = new TextView(this);
+		text.setId(1000000);
 		text.setText("fuck this man\n fuck this");
 		text.setOnClickListener(new View.OnClickListener() {
 
@@ -26,22 +30,38 @@ public class TestActivity extends Activity {
 		this.setContentView(text);
 	}
 
-
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Bundle add = new Bundle();
-		add.putInt("op1", 1);
-		add.putInt("op2", 2);
-		new Question(new MathQuestion.Stub() {
+		System.out.println("UI: " + android.os.Process.myPid() + "|"
+				+ android.os.Process.myTid());
+		new Question<MathData>(new MathQuestion.Stub() {
 
 			@Override
-			public void answer(Bundle mathData) throws RemoteException {
-
-				System.out.println("sum is : " + mathData.getInt("sum"));
-
+			public List<MathData> getQuestions() {
+				System.out.println(System.currentTimeMillis());
+				System.out.println("getQuestions: "
+						+ android.os.Process.myPid() + "|"
+						+ android.os.Process.myTid());
+				List<MathData> things = new ArrayList<MathData>();
+				things.add(new MathData(1, 2));
+				things.add(new MathData(3, 4));
+				return things;
 			}
-		}, add, "math", "add").ask(this);
+
+			@Override
+			public void answer(List<MathData> mathDatas) throws RemoteException {
+				System.out.println(System.currentTimeMillis());
+				System.out.println("anwswer: " + android.os.Process.myPid()
+						+ "|" + android.os.Process.myTid());
+				for (MathData mathData : mathDatas) {
+					System.out.println("sum is : " + mathData.sum);
+				}
+				TextView thingy = (TextView) TestActivity.this
+						.findViewById(1000000);
+				thingy.setText("hoorey");
+			}
+		}, new MathData(1, 2), "math", "add").ask(this);
 
 	}
 

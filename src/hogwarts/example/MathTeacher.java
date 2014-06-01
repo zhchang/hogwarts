@@ -3,6 +3,8 @@ package hogwarts.example;
 import hogwarts.school.staff.NormalTeacher;
 import hogwarts.school.study.QuestionWork;
 
+import java.util.List;
+
 public class MathTeacher extends NormalTeacher {
 
 	public MathTeacher() {
@@ -12,16 +14,19 @@ public class MathTeacher extends NormalTeacher {
 			@Override
 			protected void doJob() {
 				if (null != question) {
-					MathQuestion thing = MathQuestion.Stub
+					MathQuestion ipc = MathQuestion.Stub
 							.asInterface(question.ipc);
-					if (null != thing) {
-						int op1 = question.param.getInt("op1");
-						int op2 = question.param.getInt("op2");
-						question.param.putInt("sum", op1 + op2);
+					if (null != ipc) {
+						MathData mathData = (MathData)question.param;
+						mathData.sum = mathData.op1 + mathData.op2;
 						try {
-							thing.answer(question.param);
+							List<MathData> things = ipc.getQuestions();
+							for(MathData thing : things){
+								thing.sum = thing.op1 + thing.op2;
+							}
+							ipc.answer(things);
 						} catch (Exception e) {
-
+							e.printStackTrace();
 						}
 					}
 
