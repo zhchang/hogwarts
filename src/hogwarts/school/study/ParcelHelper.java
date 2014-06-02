@@ -3,14 +3,22 @@ package hogwarts.school.study;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ParcelHelper {
-	Parcel parcel;
+	public Parcel parcel;
 	
-	public ParcelHelper(Parcel parcel){
-		this.parcel = parcel;
+	public ParcelHelper(){
+	}
+	
+	ParcelHelper writeBundle(Bundle value){
+		writeBoolean(value!=null);
+		if(value!=null){
+			parcel.writeBundle(value);
+		}
+		return this;
 	}
 	
 	ParcelHelper writeInt(int value){
@@ -88,16 +96,25 @@ public class ParcelHelper {
 	}
 	
 	<T>void readParcelable(T object,ClassLoader cl){
-		boolean isNull = readBoolean();
-		if(!isNull){
+		boolean notNull = readBoolean();
+		if(notNull){
 			object = parcel.readParcelable(cl);
 		}
 	}
 	
+	Bundle readBundle(){
+
+		boolean notNull = readBoolean();
+		if(notNull){
+			return parcel.readBundle();
+		}
+		return null;
+	}
+	
 	List<String> readStringList(){
 		List<String> things = null;
-		boolean isNull = readBoolean();
-		if(!isNull){
+		boolean notNull = readBoolean();
+		if(notNull){
 			things = new ArrayList<String>();
 			int count = readInt();
 			for(int i = 0 ; i < count; i ++){
@@ -109,8 +126,8 @@ public class ParcelHelper {
 	
 	<T>List<T> readParcelableList(ClassLoader cl){
 		List<T> things = null;
-		boolean isNull = readBoolean();
-		if(!isNull){
+		boolean notNull = readBoolean();
+		if(notNull){
 			things = new ArrayList<T>();
 			int count = readInt();
 			for(int i  = 0 ; i < count; i ++){

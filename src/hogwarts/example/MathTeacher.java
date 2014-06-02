@@ -17,8 +17,6 @@ public class MathTeacher extends NormalTeacher {
 					MathQuestion ipc = MathQuestion.Stub
 							.asInterface(question.ipc);
 					if (null != ipc) {
-						MathData mathData = (MathData)question.param;
-						mathData.sum = mathData.op1 + mathData.op2;
 						try {
 							List<MathData> things = ipc.getQuestions();
 							for(MathData thing : things){

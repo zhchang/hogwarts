@@ -35,7 +35,7 @@ public class TestActivity extends Activity {
 		super.onResume();
 		System.out.println("UI: " + android.os.Process.myPid() + "|"
 				+ android.os.Process.myTid());
-		new Question<MathData>(new MathQuestion.Stub() {
+		new Question(new MathQuestion.Stub() {
 
 			@Override
 			public List<MathData> getQuestions() {
@@ -61,7 +61,7 @@ public class TestActivity extends Activity {
 						.findViewById(1000000);
 				thingy.setText("hoorey");
 			}
-		}, new MathData(1, 2), "math", "add").ask(this);
+		}, null, "math", "add").ask(this);
 
 	}
 

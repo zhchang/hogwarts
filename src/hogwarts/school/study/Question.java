@@ -3,17 +3,19 @@ package hogwarts.school.study;
 import hogwarts.school.House;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Question<T extends Parcelable> implements Parcelable {
+public class Question implements Parcelable {
 	public IBinder ipc;
-	public T param;
+	public Bundle param;
 	public String subject;
 	public String id;
+	private ParcelHelper helper = new ParcelHelper();
 
-	public Question(IBinder ipc, T param,String subject,String id) {
+	public Question(IBinder ipc, Bundle param,String subject,String id) {
 		this.ipc = ipc;
 		this.param = param;
 		this.subject = subject;
@@ -21,9 +23,10 @@ public class Question<T extends Parcelable> implements Parcelable {
 	}
 
 	public Question(Parcel in) {
+		helper.parcel = in;
 		id = in.readString();
 		subject = in.readString();
-		param = in.readParcelable(this.getClass().getClassLoader());
+		param = helper.readBundle();
 		ipc = in.readStrongBinder();
 	}
 
@@ -45,9 +48,8 @@ public class Question<T extends Parcelable> implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(id);
-		dest.writeString(subject);
-		dest.writeParcelable(param, Parcelable.CONTENTS_FILE_DESCRIPTOR);
+		helper.parcel = dest;
+		helper.writeString(id).writeString(subject).writeBundle(param);
 		dest.writeStrongBinder(ipc);
 	}
 
