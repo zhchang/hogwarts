@@ -13,7 +13,6 @@ public class Question implements Parcelable {
 	public Bundle param;
 	public String subject;
 	public String id;
-	private ParcelHelper helper = new ParcelHelper();
 
 	public Question(IBinder ipc, Bundle param,String subject,String id) {
 		this.ipc = ipc;
@@ -23,10 +22,9 @@ public class Question implements Parcelable {
 	}
 
 	public Question(Parcel in) {
-		helper.parcel = in;
 		id = in.readString();
 		subject = in.readString();
-		param = helper.readBundle();
+		param = ParcelHelper.readBundle(in);
 		ipc = in.readStrongBinder();
 	}
 
@@ -48,8 +46,9 @@ public class Question implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		helper.parcel = dest;
-		helper.writeString(id).writeString(subject).writeBundle(param);
+		ParcelHelper.writeString(dest,id);
+		ParcelHelper.writeString(dest,subject);
+		ParcelHelper.writeBundle(dest,param);
 		dest.writeStrongBinder(ipc);
 	}
 

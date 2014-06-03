@@ -1,141 +1,256 @@
 package hogwarts.school.study;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.SparseArray;
 
 public class ParcelHelper {
-	public Parcel parcel;
-	
-	public ParcelHelper(){
-	}
-	
-	ParcelHelper writeBundle(Bundle value){
-		writeBoolean(value!=null);
-		if(value!=null){
+
+	public static void writeBundle(Parcel parcel, Bundle value) {
+		writeBoolean(parcel, value != null);
+		if (value != null) {
 			parcel.writeBundle(value);
 		}
-		return this;
 	}
-	
-	ParcelHelper writeInt(int value){
+
+	public static void writeInt(Parcel parcel, int value) {
 		parcel.writeInt(value);
-		return this;
 	}
-	ParcelHelper writeLong(long value){
+
+	public static void writeLong(Parcel parcel, long value) {
 		parcel.writeLong(value);
-		return this;
 	}
-	ParcelHelper writeByte(byte value){
+
+	public static void writeByte(Parcel parcel, byte value) {
 		parcel.writeByte(value);
-		return this;
 	}
-	ParcelHelper writeDouble(double value){
+
+	public static void writeDouble(Parcel parcel, double value) {
 		parcel.writeDouble(value);
-		return this;
 	}
-	ParcelHelper writeBoolean(boolean value){
-		parcel.writeByte((byte)(value?1:0));
-		return this;
+
+	public static void writeBoolean(Parcel parcel, boolean value) {
+		parcel.writeByte((byte) (value ? 1 : 0));
 	}
-	ParcelHelper writeString(String value){
+
+	public static void writeString(Parcel parcel, String value) {
 		parcel.writeString(value);
-		return this;
 	}
-	
-	ParcelHelper writeParcelable(Parcelable value){
-		writeBoolean(value!=null);
-		if(value!=null){
+
+	public static void writeParcelable(Parcel parcel, Parcelable value) {
+		writeBoolean(parcel, value != null);
+		if (value != null) {
 			parcel.writeParcelable(value, Parcelable.CONTENTS_FILE_DESCRIPTOR);
 		}
-		return this;
 	}
-	
-	ParcelHelper writeList(List<Parcelable> values){
-		writeBoolean(values!=null);
-		if(values!=null){
-			writeInt(values.size());
-			for(Parcelable value : values){
-				writeParcelable(value);
+
+	public static <T extends Parcelable> void writeList(Parcel parcel,
+			List<T> values) {
+		writeBoolean(parcel, values != null);
+		if (values != null) {
+			writeInt(parcel, values.size());
+			for (Parcelable value : values) {
+				writeParcelable(parcel, value);
 			}
 		}
-		return this;
 	}
-	ParcelHelper writeStringList(List<String> values){
-		writeBoolean(values!=null);
-		if(values != null){
-			writeInt(values.size());
-			for(String value : values){
-				writeString(value);
+
+	public static void writeStringList(Parcel parcel, List<String> values) {
+		writeBoolean(parcel, values != null);
+		if (values != null) {
+			writeInt(parcel, values.size());
+			for (String value : values) {
+				writeString(parcel, value);
 			}
 		}
-		return this;
 	}
-	
-	int readInt(){
+
+	public static <T extends Parcelable> void writeSparseArray(Parcel parcel,
+			SparseArray<T> values) {
+		writeBoolean(parcel, values != null);
+		if (values != null) {
+			int count = values.size();
+			writeInt(parcel, count);
+			for (int i = 0; i < count; i++) {
+				int key = values.keyAt(i);
+				writeInt(parcel, key);
+				writeParcelable(parcel, values.get(key));
+			}
+		}
+	}
+
+	public static void writeSparseString(Parcel parcel,
+			SparseArray<String> values) {
+		writeBoolean(parcel, values != null);
+		if (values != null) {
+			int count = values.size();
+			writeInt(parcel, count);
+			for (int i = 0; i < count; i++) {
+				int key = values.keyAt(i);
+				writeInt(parcel, key);
+				writeString(parcel, values.get(key));
+			}
+		}
+	}
+
+	public static void writeStringMap(Parcel parcel, Map<String, String> values) {
+		writeBoolean(parcel, values != null);
+		if (values != null) {
+			int count = values.size();
+			writeInt(parcel, count);
+			for (Map.Entry<String, String> entry : values.entrySet()) {
+				writeString(parcel, entry.getKey());
+				writeString(parcel, entry.getValue());
+			}
+		}
+	}
+
+	public static <T extends Parcelable> void writeMap(Parcel parcel,
+			Map<String, T> values) {
+		writeBoolean(parcel, values != null);
+		if (values != null) {
+			int count = values.size();
+			writeInt(parcel, count);
+			for (Map.Entry<String, T> entry : values.entrySet()) {
+				writeString(parcel, entry.getKey());
+				writeParcelable(parcel, entry.getValue());
+			}
+		}
+	}
+
+	public static Map<String, String> readStringMap(Parcel parcel) {
+		Map<String, String> result = null;
+		boolean notNull = readBoolean(parcel);
+		if (notNull) {
+			result = new HashMap<String, String>();
+			int count = readInt(parcel);
+			for (int i = 0; i < count; i++) {
+				result.put(readString(parcel), readString(parcel));
+			}
+		}
+		return result;
+	}
+
+	public static <T extends Parcelable> Map<String, T> readMap(Parcel parcel,ClassLoader cl) {
+		Map<String, T> result = null;
+		boolean notNull = readBoolean(parcel);
+		if (notNull) {
+			result = new HashMap<String, T>();
+			int count = readInt(parcel);
+			for (int i = 0; i < count; i++) {
+				String key = readString(parcel);
+				T obj = null;
+				readParcelable(parcel,obj,cl);
+				result.put(key, obj);
+			}
+		}
+		return result;
+	}
+
+	public static int readInt(Parcel parcel) {
 		return parcel.readInt();
 	}
 
-	byte readByte(){
+	public static byte readByte(Parcel parcel) {
 		return parcel.readByte();
 	}
-	long readLong(){
+
+	public static long readLong(Parcel parcel) {
 		return parcel.readLong();
 	}
-	double readDouble(){
+
+	public static double readDouble(Parcel parcel) {
 		return parcel.readDouble();
 	}
-	boolean readBoolean(){
-		return parcel.readByte()==1;
+
+	public static boolean readBoolean(Parcel parcel) {
+		return parcel.readByte() == 1;
 	}
-	String readString(){
+
+	public static String readString(Parcel parcel) {
 		return parcel.readString();
 	}
-	
-	<T>void readParcelable(T object,ClassLoader cl){
-		boolean notNull = readBoolean();
-		if(notNull){
+
+	public static <T> void readParcelable(Parcel parcel, T object,
+			ClassLoader cl) {
+		boolean notNull = readBoolean(parcel);
+		if (notNull) {
 			object = parcel.readParcelable(cl);
 		}
 	}
-	
-	Bundle readBundle(){
 
-		boolean notNull = readBoolean();
-		if(notNull){
+	public static Bundle readBundle(Parcel parcel) {
+		boolean notNull = readBoolean(parcel);
+		if (notNull) {
 			return parcel.readBundle();
 		}
 		return null;
 	}
-	
-	List<String> readStringList(){
+
+	public static List<String> readStringList(Parcel parcel) {
 		List<String> things = null;
-		boolean notNull = readBoolean();
-		if(notNull){
+		boolean notNull = readBoolean(parcel);
+		if (notNull) {
 			things = new ArrayList<String>();
-			int count = readInt();
-			for(int i = 0 ; i < count; i ++){
-				things.add(readString());
+			int count = readInt(parcel);
+			for (int i = 0; i < count; i++) {
+				things.add(readString(parcel));
 			}
 		}
 		return things;
 	}
-	
-	<T>List<T> readParcelableList(ClassLoader cl){
+
+	public static <T extends Parcelable> List<T> readParcelableList(
+			Parcel parcel, ClassLoader cl) {
 		List<T> things = null;
-		boolean notNull = readBoolean();
-		if(notNull){
+		boolean notNull = readBoolean(parcel);
+		if (notNull) {
 			things = new ArrayList<T>();
-			int count = readInt();
-			for(int i  = 0 ; i < count; i ++){
-				T thing = parcel.readParcelable(cl);
+			int count = readInt(parcel);
+			for (int i = 0; i < count; i++) {
+				T thing = null;
+				readParcelable(parcel, thing, cl);
 				things.add(thing);
 			}
 		}
 		return things;
 	}
-}
 
+	public static <T extends Parcelable> SparseArray<T> readSparseArray(
+			Parcel parcel, ClassLoader cl) {
+		SparseArray<T> things = null;
+		boolean notNull = readBoolean(parcel);
+		if (notNull) {
+			things = new SparseArray<T>();
+			int count = readInt(parcel);
+			for (int i = 0; i < count; i++) {
+				int key = readInt(parcel);
+				T thing = null;
+				readParcelable(parcel, thing, cl);
+				things.put(key, thing);
+			}
+		}
+		return things;
+	}
+
+	public static SparseArray<String> readSparseString(Parcel parcel) {
+		SparseArray<String> things = null;
+		boolean notNull = readBoolean(parcel);
+		if (notNull) {
+			things = new SparseArray<String>();
+			int count = readInt(parcel);
+			for (int i = 0; i < count; i++) {
+				int key = readInt(parcel);
+				String thing = readString(parcel);
+				things.put(key, thing);
+			}
+		}
+		return things;
+	}
+}
