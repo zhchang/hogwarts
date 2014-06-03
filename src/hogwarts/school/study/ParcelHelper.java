@@ -123,6 +123,33 @@ public class ParcelHelper {
 			}
 		}
 	}
+	
+	public static <T extends Parcelable> void writeListMap(Parcel parcel, Map<String,List<T>> values){
+		writeBoolean(parcel, values != null);
+		if (values != null) {
+			int count = values.size();
+			writeInt(parcel, count);
+			for (Map.Entry<String, List<T>> entry : values.entrySet()) {
+				writeString(parcel, entry.getKey());
+				writeList(parcel, entry.getValue());
+			}
+		}
+	}
+	
+	public static <T extends Parcelable> Map<String,List<T>> readListMap(Parcel parcel, ClassLoader cl){
+		Map<String, List<T>> result = null;
+		boolean notNull = readBoolean(parcel);
+		if (notNull) {
+			result = new HashMap<String, List<T>>();
+			int count = readInt(parcel);
+			for (int i = 0; i < count; i++) {
+				String key = readString(parcel);
+				List<T> obj = readParcelableList(parcel,cl);
+				result.put(key, obj);
+			}
+		}
+		return result;
+	}
 
 	public static Map<String, String> readStringMap(Parcel parcel) {
 		Map<String, String> result = null;
