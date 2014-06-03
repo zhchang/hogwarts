@@ -145,8 +145,7 @@ public class ParcelHelper {
 			int count = readInt(parcel);
 			for (int i = 0; i < count; i++) {
 				String key = readString(parcel);
-				T obj = null;
-				readParcelable(parcel,obj,cl);
+				T obj = readParcelable(parcel,cl);
 				result.put(key, obj);
 			}
 		}
@@ -177,12 +176,14 @@ public class ParcelHelper {
 		return parcel.readString();
 	}
 
-	public static <T> void readParcelable(Parcel parcel, T object,
+	public static <T> T readParcelable(Parcel parcel,
 			ClassLoader cl) {
+		T result = null;
 		boolean notNull = readBoolean(parcel);
 		if (notNull) {
-			object = parcel.readParcelable(cl);
+			result = parcel.readParcelable(cl);
 		}
+		return result;
 	}
 
 	public static Bundle readBundle(Parcel parcel) {
@@ -214,8 +215,7 @@ public class ParcelHelper {
 			things = new ArrayList<T>();
 			int count = readInt(parcel);
 			for (int i = 0; i < count; i++) {
-				T thing = null;
-				readParcelable(parcel, thing, cl);
+				T thing = readParcelable(parcel, cl);
 				things.add(thing);
 			}
 		}
@@ -231,8 +231,7 @@ public class ParcelHelper {
 			int count = readInt(parcel);
 			for (int i = 0; i < count; i++) {
 				int key = readInt(parcel);
-				T thing = null;
-				readParcelable(parcel, thing, cl);
+				T thing = readParcelable(parcel, cl);
 				things.put(key, thing);
 			}
 		}
