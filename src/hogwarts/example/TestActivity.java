@@ -1,5 +1,7 @@
 package hogwarts.example;
 
+import hogwarts.school.owl.Owl;
+import hogwarts.school.owl.OwlOwner;
 import hogwarts.school.owl.Owlery;
 import hogwarts.school.study.Question;
 
@@ -12,7 +14,7 @@ import android.os.RemoteException;
 import android.view.View;
 import android.widget.TextView;
 
-public class TestActivity extends Activity {
+public class TestActivity extends Activity implements OwlOwner{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -20,14 +22,21 @@ public class TestActivity extends Activity {
 		TextView text = new TextView(this);
 		text.setId(1000000);
 		text.setText("fuck this man\n fuck this");
-		text.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Owlery.getInstance().post("fuck", new Bundle());
-			}
-		});
 		this.setContentView(text);
+	}
+	
+	@Override
+	public void onStart(){
+		super.onStart();
+		Owl owl = Owlery.getInstance().registerOwl("testActivity", this);
+		Owlery.getInstance().subscribe("test.news", owl);
+	}
+	
+	@Override
+	public void onStop(){
+		super.onStop();
+		Owl owl = Owlery.getInstance().registerOwl("testActivity", this);
+		Owlery.getInstance().disposeOwl(owl);
 	}
 
 	@Override
@@ -63,6 +72,17 @@ public class TestActivity extends Activity {
 			}
 		}, null, "math", "add").ask(this);
 
+	}
+
+	@Override
+	public void onPost(Bundle bundle) {
+		System.out.println(bundle);
+	}
+
+	@Override
+	public void onNews(String news, Bundle bundle) {
+		System.out.println("news : " + news);
+		System.out.println(bundle);
 	}
 
 }

@@ -108,6 +108,7 @@ public class Owlery extends BroadcastReceiver {
 				owls.add(owl);
 			}
 		}
+		System.out.println("subscription of news["+news+"] of size("+owls.size()+")");
 	}
 
 	public void unsubscribe(String news, Owl owl) {
@@ -142,6 +143,7 @@ public class Owlery extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		System.out.println("on receive owlpost: " + intent);
 		if("owlpost".equals(intent.getAction())){
+			System.out.println("this is owl post");
 			String name = intent.getStringExtra("name");
 			Bundle bundle = intent.getBundleExtra("post");
 			if (null != name) {
@@ -152,11 +154,13 @@ public class Owlery extends BroadcastReceiver {
 			}
 		}
 		else if("owlnews".equals(intent.getAction())){
+			System.out.println("this is owl news");
 			String news = intent.getStringExtra("news");
 			Bundle bundle = intent.getBundleExtra("post");
 			if(null != news){
 				List<Owl> owls = subscriptions.get(news);
 				if(null != owls){
+					System.out.println("subscription size: " + owls.size());
 					synchronized(owls){
 						for(Owl owl : owls){
 							owl.onNews(news,bundle);

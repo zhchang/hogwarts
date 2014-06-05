@@ -1,9 +1,12 @@
 package hogwarts.example;
 
+import hogwarts.school.owl.Owlery;
 import hogwarts.school.staff.NormalTeacher;
 import hogwarts.school.study.QuestionWork;
 
 import java.util.List;
+
+import android.os.Bundle;
 
 public class MathTeacher extends NormalTeacher {
 
@@ -23,6 +26,10 @@ public class MathTeacher extends NormalTeacher {
 								thing.sum = thing.op1 + thing.op2;
 							}
 							ipc.answer(things);
+							Bundle bundle = new Bundle();
+							bundle.putString("testing", "testing");
+							Owlery.getInstance().post("testActivity", bundle);
+							Owlery.getInstance().publish("test.news", bundle);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
