@@ -7,10 +7,10 @@ import hogwarts.school.staff.Teacher;
 import hogwarts.school.study.Question;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import android.app.Service;
 import android.content.Context;
@@ -22,7 +22,7 @@ public abstract class House extends Service {
 	private Head head;
 	public static Class serviceClass;
 
-	Map<String, Teacher> subjectMap = new HashMap<String, Teacher>();
+	Map<String, Teacher> subjectMap = new ConcurrentHashMap<String, Teacher>();
 	List<Office> offices = new ArrayList<Office>();
 	private static final int MAX_OFFICES = 5;
 

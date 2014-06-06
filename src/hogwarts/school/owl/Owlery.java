@@ -59,8 +59,8 @@ public class Owlery extends BroadcastReceiver {
 		intent.putExtra("name", name);
 		context.sendBroadcast(intent);
 	}
-	
-	public void publish(String news, Bundle bundle){
+
+	public void publish(String news, Bundle bundle) {
 		Intent intent = new Intent();
 		intent.setAction("owlnews");
 		intent.addCategory("hogwarts");
@@ -108,7 +108,8 @@ public class Owlery extends BroadcastReceiver {
 				owls.add(owl);
 			}
 		}
-		System.out.println("subscription of news["+news+"] of size("+owls.size()+")");
+		System.out.println("subscription of news[" + news + "] of size("
+				+ owls.size() + ")");
 	}
 
 	public void unsubscribe(String news, Owl owl) {
@@ -141,29 +142,31 @@ public class Owlery extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		ClassLoader cl = this.getClass().getClassLoader();
 		System.out.println("on receive owlpost: " + intent);
-		if("owlpost".equals(intent.getAction())){
+		if ("owlpost".equals(intent.getAction())) {
 			System.out.println("this is owl post");
 			String name = intent.getStringExtra("name");
 			Bundle bundle = intent.getBundleExtra("post");
+			bundle.setClassLoader(cl);
 			if (null != name) {
 				Owl owl = owls.get(name);
 				if (null != owl) {
 					owl.onPost(bundle);
 				}
 			}
-		}
-		else if("owlnews".equals(intent.getAction())){
+		} else if ("owlnews".equals(intent.getAction())) {
 			System.out.println("this is owl news");
 			String news = intent.getStringExtra("news");
 			Bundle bundle = intent.getBundleExtra("post");
-			if(null != news){
+			bundle.setClassLoader(cl);		
+			if (null != news) {
 				List<Owl> owls = subscriptions.get(news);
-				if(null != owls){
+				if (null != owls) {
 					System.out.println("subscription size: " + owls.size());
-					synchronized(owls){
-						for(Owl owl : owls){
-							owl.onNews(news,bundle);
+					synchronized (owls) {
+						for (Owl owl : owls) {
+							owl.onNews(news, bundle);
 						}
 					}
 				}
