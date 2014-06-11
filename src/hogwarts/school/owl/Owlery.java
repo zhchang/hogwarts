@@ -148,7 +148,9 @@ public class Owlery extends BroadcastReceiver {
 			System.out.println("this is owl post");
 			String name = intent.getStringExtra("name");
 			Bundle bundle = intent.getBundleExtra("post");
-			bundle.setClassLoader(cl);
+			if (null != bundle) {
+				bundle.setClassLoader(cl);
+			}
 			if (null != name) {
 				Owl owl = owls.get(name);
 				if (null != owl) {
@@ -159,7 +161,9 @@ public class Owlery extends BroadcastReceiver {
 			System.out.println("this is owl news");
 			String news = intent.getStringExtra("news");
 			Bundle bundle = intent.getBundleExtra("post");
-			bundle.setClassLoader(cl);		
+			if (null != bundle) {
+				bundle.setClassLoader(cl);
+			}
 			if (null != news) {
 				List<Owl> owls = subscriptions.get(news);
 				if (null != owls) {
