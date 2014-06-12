@@ -104,7 +104,7 @@ public abstract class House extends Service {
 		}
 	}
 
-	public void requestHelp(Object object, String subject, String help) {
+	public void requestHelp(Object object, String subject, String help)throws Exception {
 		Teacher teacher = subjectMap.get(subject);
 		if (null != teacher) {
 			teacher.help(help, object);

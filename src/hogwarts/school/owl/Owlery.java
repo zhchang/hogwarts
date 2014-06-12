@@ -154,7 +154,11 @@ public class Owlery extends BroadcastReceiver {
 			if (null != name) {
 				Owl owl = owls.get(name);
 				if (null != owl) {
-					owl.onPost(bundle);
+					try {
+						owl.onPost(bundle);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		} else if ("owlnews".equals(intent.getAction())) {
@@ -170,7 +174,11 @@ public class Owlery extends BroadcastReceiver {
 					System.out.println("subscription size: " + owls.size());
 					synchronized (owls) {
 						for (Owl owl : owls) {
-							owl.onNews(news, bundle);
+							try {
+								owl.onNews(news, bundle);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}

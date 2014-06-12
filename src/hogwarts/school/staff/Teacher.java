@@ -13,5 +13,5 @@ public interface Teacher {
 	
 	void setHouse(House house);
 	
-	void help(String help, Object object);
+	void help(String help, Object object) throws Exception;
 }
