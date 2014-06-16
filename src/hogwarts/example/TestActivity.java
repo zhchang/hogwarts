@@ -11,29 +11,28 @@ import java.util.List;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.view.View;
 import android.widget.TextView;
 
-public class TestActivity extends Activity implements OwlOwner{
+public class TestActivity extends Activity implements OwlOwner {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TextView text = new TextView(this);
 		text.setId(1000000);
-		text.setText("fuck this man\n fuck this");
+		text.setText("test activity");
 		this.setContentView(text);
 	}
-	
+
 	@Override
-	public void onStart(){
+	public void onStart() {
 		super.onStart();
 		Owl owl = Owlery.getInstance().registerOwl("testActivity", this);
 		Owlery.getInstance().subscribe("test.news", owl);
 	}
-	
+
 	@Override
-	public void onStop(){
+	public void onStop() {
 		super.onStop();
 		Owl owl = Owlery.getInstance().registerOwl("testActivity", this);
 		Owlery.getInstance().disposeOwl(owl);

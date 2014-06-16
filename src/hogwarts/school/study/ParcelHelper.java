@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -47,6 +48,13 @@ public class ParcelHelper {
 		writeBoolean(parcel, value != null);
 		if (value != null) {
 			parcel.writeParcelable(value, Parcelable.CONTENTS_FILE_DESCRIPTOR);
+		}
+	}
+	
+	public static void writeBinder(Parcel parcel, IBinder value){
+		writeBoolean(parcel,value!=null);
+		if(null!=value){
+			parcel.writeStrongBinder(value);
 		}
 	}
 
@@ -144,7 +152,7 @@ public class ParcelHelper {
 			int count = readInt(parcel);
 			for (int i = 0; i < count; i++) {
 				String key = readString(parcel);
-				List<T> obj = readParcelableList(parcel,cl);
+				List<T> obj = readList(parcel,cl);
 				result.put(key, obj);
 			}
 		}
@@ -202,6 +210,14 @@ public class ParcelHelper {
 	public static String readString(Parcel parcel) {
 		return parcel.readString();
 	}
+	
+	public static IBinder readBinder(Parcel parcel, ClassLoader cl){
+		boolean notNull = readBoolean(parcel);
+		if(notNull){
+			return parcel.readStrongBinder();
+		}
+		return null;
+	}
 
 	public static <T> T readParcelable(Parcel parcel,
 			ClassLoader cl) {
@@ -234,7 +250,7 @@ public class ParcelHelper {
 		return things;
 	}
 
-	public static <T extends Parcelable> List<T> readParcelableList(
+	public static <T extends Parcelable> List<T> readList(
 			Parcel parcel, ClassLoader cl) {
 		List<T> things = null;
 		boolean notNull = readBoolean(parcel);

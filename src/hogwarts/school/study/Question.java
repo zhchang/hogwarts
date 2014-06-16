@@ -3,20 +3,19 @@ package hogwarts.school.study;
 import hogwarts.school.House;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Question implements Parcelable {
 	public IBinder ipc;
-	public Bundle param;
+	public IBinder lifeCycle;
 	public String subject;
 	public String id;
 
-	public Question(IBinder ipc, Bundle param,String subject,String id) {
+	public Question(IBinder ipc,IBinder lifeCycle,String subject,String id) {
 		this.ipc = ipc;
-		this.param = param;
+		this.lifeCycle = lifeCycle;
 		this.subject = subject;
 		this.id = id;
 	}
@@ -24,8 +23,8 @@ public class Question implements Parcelable {
 	public Question(Parcel in) {
 		id = in.readString();
 		subject = in.readString();
-		param = ParcelHelper.readBundle(in);
-		ipc = in.readStrongBinder();
+		ipc = ParcelHelper.readBinder(in, this.getClass().getClassLoader());
+		lifeCycle = ParcelHelper.readBinder(in, this.getClass().getClassLoader());
 	}
 
 	public void ask(Context context) {
@@ -48,8 +47,8 @@ public class Question implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		ParcelHelper.writeString(dest,id);
 		ParcelHelper.writeString(dest,subject);
-		ParcelHelper.writeBundle(dest,param);
-		dest.writeStrongBinder(ipc);
+		ParcelHelper.writeBinder(dest, ipc);
+		ParcelHelper.writeBinder(dest, lifeCycle);
 	}
 
 	public static final Parcelable.Creator<Question> CREATOR = new Parcelable.Creator<Question>() {
