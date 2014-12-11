@@ -1,0 +1,1 @@
+<project default="help" name="build-rules"><target depends="-set-debug-mode,-compile" name="compile" /></project>
