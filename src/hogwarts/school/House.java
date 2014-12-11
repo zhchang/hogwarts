@@ -75,21 +75,30 @@ public abstract class House extends Service {
 
 	public Office getAnOffice() {
 		Office chosen = null;
-		int min = Integer.MAX_VALUE;
 		synchronized (offices) {
 			for (Office office : offices) {
-				if (office.getUseCount() < min) {
-					min = office.getUseCount();
+				if (office.getUseCount() == 0) {
 					chosen = office;
 				}
 			}
-			if (null == chosen || (min > 0 && offices.size() < MAX_OFFICES)) {
+			if (null == chosen ) {
+                            if(offices.size() < MAX_OFFICES){
 				try {
 					chosen = new Office();
 					offices.add(chosen);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+                            }
+                            else{
+		                int min = Integer.MAX_VALUE;
+                                for (Office office : offices) {
+                                    if (office.getUseCount() < min) {
+                                        min = office.getUseCount();
+                                        chosen = office;
+                                    }
+			        }       
+                            }
 			}
 		}
 		return chosen;

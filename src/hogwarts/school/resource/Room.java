@@ -13,29 +13,31 @@ public class Room extends Thread{
 	protected int useCount = 0;
 
 	protected Room(){
-		this.start();
+	    this.start();
 	}
 	
 	public int getUseCount(){
-		return useCount;
+	    return useCount;
 	}
 	public synchronized void leave() {
-		useCount--;
+	    useCount--;
 	}
 	public void run() {
+            synchronized(this){
 		Looper.prepare();
 		handler = new Handler();
 		while (tasks.size() > 0) {
 			tasks.remove().run();
 		}
-		Looper.loop();
+            }
+	    Looper.loop();
 	}
 	protected synchronized void addJob(Runnable job){
-		if(null == handler){
-			tasks.add(job);
-		}
-		else{
-			handler.post(job);
-		}
+            if(null == handler){
+                tasks.add(job);
+            }
+            else{
+                handler.post(job);
+            }
 	}
 }
